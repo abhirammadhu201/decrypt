@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Hybrid Cipher Decrypt</title>
+<style>
+body {
+    background: #0f172a;
+    color: white;
+    font-family: Segoe UI;
+    text-align: center;
+    padding: 40px;
+}
+input, textarea {
+    width: 80%;
+    padding: 10px;
+    margin: 10px;
+    background: #1e293b;
+    color: white;
+    border: none;
+}
+button {
+    padding: 10px 20px;
+    background: #6366f1;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<h2>🔐 Hybrid Cipher Decrypt Portal</h2>
+
+<textarea id="cipher" rows="4" placeholder="Encrypted message"></textarea><br>
+<input type="password" id="password" placeholder="Enter Password"><br>
+<button onclick="decrypt()">Decrypt</button>
+
+<h3 id="result"></h3>
+
+<script>
+function passwordToShift(password) {
+    let sum = 0;
+    for (let i = 0; i < password.length; i++) {
+        sum += password.charCodeAt(i);
+    }
+    return sum % 26;
+}
+
+function caesarDecrypt(text, shift) {
+    let result = "";
+    shift = shift % 26;
+
+    for (let i = 0; i < text.length; i++) {
+        let char = text[i];
+
+        if (/[a-zA-Z]/.test(char)) {
+            let start = (char === char.toUpperCase()) ? 65 : 97;
+            result += String.fromCharCode((char.charCodeAt(0) - start - shift + 26) % 26 + start);
+        } else {
+            result += char;
+        }
+    }
+    return result;
+}
+
+function decrypt() {
+    let text = document.getElementById("cipher").value;
+    let password = document.getElementById("password").value;
+
+    if (!text || !password) {
+        alert("All fields required");
+        return;
+    }
+
+    let shift = passwordToShift(password);
+    let output = caesarDecrypt(text, shift);
+
+    document.getElementById("result").innerText = "Decrypted Message:\n" + output;
+}
+
+// Auto-fill from URL
+const params = new URLSearchParams(window.location.search);
+if (params.has("msg")) {
+    document.getElementById("cipher").value = decodeURIComponent(params.get("msg"));
+}
+</script>
+
+</body>
+</html>
